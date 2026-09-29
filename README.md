@@ -128,17 +128,32 @@ probe which monitor ids exist.
 
 ## Deploying
 
-The backend is a single container:
+One click for the backend, using the included Render blueprint:
+
+1. Go to https://render.com/deploy?repo=https://github.com/marshu123/pulse
+2. Confirm the plan. Render creates `pulse-api` and a `pulse-db` PostgreSQL
+   database, injects `DATABASE_URL`, and generates `JWT_SECRET` for you.
+3. When it finishes, set `CORS_ORIGINS` to your frontend origin.
+
+For the frontend:
+
+```bash
+cd frontend
+npx vercel
+```
+
+Set `VITE_API_URL` to the Render API URL, then deploy. `npm run build` produces
+a static `dist/` that can go on any static host.
+
+To run the backend in Docker instead:
 
 ```bash
 docker build -t pulse .
 docker run -p 8000:8000 -e JWT_SECRET="$(openssl rand -hex 32)" pulse
 ```
 
-For a real deployment set `DATABASE_URL` to PostgreSQL, `CORS_ORIGINS` to your
-frontend origin, and `JWT_SECRET` to something random. The frontend is a static
-build (`npm run build` → `dist/`) and can go anywhere; point `VITE_API_URL` at
-the API.
+See [`backend/DEPLOY.md`](backend/DEPLOY.md) for the free-tier caveat: Render
+sleeps idle services, which pauses the scheduler.
 
 ## Known limits
 

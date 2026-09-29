@@ -1,0 +1,34 @@
+# Render blueprint. Create the stack with:
+#   https://render.com/deploy?repo=https://github.com/marshu123/pulse
+#
+# The database is created for you; DATABASE_URL is injected automatically.
+
+services:
+  - type: web
+    name: pulse-api
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pulse-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SCHEDULER_ENABLED
+        value: "true"
+      - key: PROBE_INTERVAL_SECONDS
+        value: "300"
+      # Replace with your deployed frontend origin once it exists.
+      - key: CORS_ORIGINS
+        value: "*"
+
+databases:
+  - name: pulse-db
+    databaseName: pulse
+    user: pulse
+    plan: free
