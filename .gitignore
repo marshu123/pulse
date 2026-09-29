@@ -1,0 +1,33 @@
+# python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# database
+*.db
+*.sqlite
+*.sqlite3
+
+# node
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/
+coverage/
+
+# env
+.env
+.env.*
+!.env.example
+
+# editors / os
+.DS_Store
+.idea/
+.vscode/
+*.log
