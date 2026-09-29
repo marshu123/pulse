@@ -271,3 +271,62 @@ def test_openapi_schema_is_valid(client) -> None:
 
     assert response.status_code == 200
     assert "/api/monitors" in response.json()["paths"]
+
+
+def test_sqlite_pragma_is_not_sent_to_other_dialects() -> None:
+    """Regression: the connect listener must not run PRAGMA on PostgreSQL.
+
+    PRAGMA is not valid SQL there, so running it broke every PostgreSQL
+    connection. Caught by the backend-postgres CI job.
+    """
+    from app.db import enable_sqlite_foreign_keys
+
+    class FakeCursor:
+        def __init__(self) -> None:
+            self.executed: list[str] = []
+
+        def execute(self, statement: str) -> None:
+            self.executed.append(statement)
+
+        def close(self) -> None:
+            pass
+
+    class FakePostgresConnection:
+        """Stands in for a psycopg connection."""
+
+        def cursor(self) -> FakeCursor:
+            self.cursor_obj = FakeCursor()
+            return self.cursor_obj
+
+    connection = FakePostgresConnection()
+    enable_sqlite_foreign_keys(connection)
+
+    assert not hasattr(connection, "cursor_obj") or connection.cursor_obj.executed == []
+
+
+def test_sqlite_pragma_is_sent_to_sqlite() -> None:
+    from app.db import enable_sqlite_foreign_keys
+
+    class FakeCursor:
+        def __init__(self) -> None:
+            self.executed: list[str] = []
+
+        def execute(self, statement: str) -> None:
+            self.executed.append(statement)
+
+        def close(self) -> None:
+            pass
+
+    class FakeSqliteConnection:
+        def cursor(self) -> FakeCursor:
+            self.cursor_obj = FakeCursor()
+            return self.cursor_obj
+
+    # The real sqlite3 module, so the dialect check passes.
+    import sqlite3
+
+    connection = sqlite3.connect(":memory:")
+    enable_sqlite_foreign_keys(connection)
+
+    assert connection.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+    connection.close()

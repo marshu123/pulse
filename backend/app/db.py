@@ -30,11 +30,15 @@ def enable_sqlite_foreign_keys(dbapi_connection, _connection_record=None) -> Non
     """SQLite ignores ON DELETE CASCADE unless foreign keys are switched on.
 
     Without this, deleting a Monitor leaves its Checks behind. PostgreSQL
-    enforces the constraint on its own, so this only applies to SQLite.
+    enforces the constraint itself, and PRAGMA is not valid SQL there, so the
+    dialect is checked before touching the connection.
 
     Takes an optional second argument so it can be registered directly as a
     SQLAlchemy ``connect`` listener.
     """
+    if type(dbapi_connection).__module__.split(".")[0] != "sqlite3":
+        return
+
     cursor = dbapi_connection.cursor()
     cursor.execute("PRAGMA foreign_keys=ON")
     cursor.close()
