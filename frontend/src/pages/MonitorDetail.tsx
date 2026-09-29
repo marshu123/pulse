@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ApiError, api, type Series } from '../api';
+import { describeError } from '../errors';
 import { formatLatency, formatUptime, latencySeries } from '../format';
 
 const WINDOWS = ['1h', '6h', '24h', '7d', '30d'] as const;
@@ -34,7 +35,7 @@ export function MonitorDetail({
           onUnauthorised();
           return;
         }
-        setError(caught instanceof ApiError ? caught.message : 'Failed to load');
+        setError(describeError(caught));
       });
     return () => {
       cancelled = true;

@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { ApiError, api, setToken, type User } from '../api';
+import { describeError } from '../errors';
 
 export function Login({
   onAuthenticated,
@@ -30,17 +31,13 @@ export function Login({
           : await api.register(email, password);
       onAuthenticated(result.user, result.access_token);
     } catch (caught) {
-      if (caught instanceof ApiError) {
-        // A 401 here means a stale token is sitting in storage. Drop it so the
-        // rest of the app starts clean.
-        if (caught.status === 401 && mode === 'login') {
-          setToken(null);
-          onUnauthorised();
-        }
-        setError(caught.message);
-      } else {
-        setError('Could not reach the API. Is the backend running?');
+      // A 401 here means a stale token is sitting in storage. Drop it so the
+      // rest of the app starts clean.
+      if (caught instanceof ApiError && caught.status === 401 && mode === 'login') {
+        setToken(null);
+        onUnauthorised();
       }
+      setError(describeError(caught));
     } finally {
       setBusy(false);
     }

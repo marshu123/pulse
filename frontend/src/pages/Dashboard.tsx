@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import { ApiError, api, type MonitorSummary } from '../api';
+import { describeError } from '../errors';
 import { formatLatency, formatUptime, relativeTime, statusOf } from '../format';
 
 export function Dashboard({
@@ -22,11 +23,7 @@ export function Dashboard({
         onSignOut();
         return;
       }
-      setError(
-        caught instanceof ApiError
-          ? caught.message
-          : 'Could not reach the API. Is the backend running?'
-      );
+      setError(describeError(caught));
     }
   }, [onSignOut]);
 
@@ -85,7 +82,7 @@ export function Dashboard({
               setError(null);
               await load();
             } catch (caught) {
-              setError(caught instanceof ApiError ? caught.message : 'Failed');
+              setError(describeError(caught));
             } finally {
               setCreating(false);
             }
