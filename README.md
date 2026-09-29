@@ -6,7 +6,24 @@ response times, and shows you when it broke.
 Built to learn the parts of a backend that are easy to skip: a background
 worker, time-series data, and deciding what a "correct" statistic means.
 
-![Status](https://img.shields.io/badge/tests-68%20passing-34ba5b) ![Frontend](https://img.shields.io/badge/frontend-41%20tests-34ba5b) ![CI](https://github.com/marshu123/pulse/actions/workflows/ci.yml/badge.svg) ![License](https://img.shields.io/badge/license-MIT-8b949e)
+![Status](https://img.shields.io/badge/tests-70%20passing-34ba5b) ![Frontend](https://img.shields.io/badge/frontend-57%20tests-34ba5b) ![CI](https://github.com/marshu123/pulse/actions/workflows/ci.yml/badge.svg) ![License](https://img.shields.io/badge/license-MIT-8b949e)
+
+---
+
+## Try it
+
+| | |
+| --- | --- |
+| **Live demo** | https://frontend-ruddy-two-24.vercel.app |
+| **API** | https://pulse-api-6sts.onrender.com |
+| **API docs** | https://pulse-api-6sts.onrender.com/docs |
+
+Create an account, add any public URL, and it is probed immediately. Nothing to
+install.
+
+> The API runs on Render's free tier, which sleeps after 15 minutes idle. The
+> first request after a quiet period takes about 30 seconds while it wakes up â€”
+> everything works, it is just slow the once. A paid instance removes the delay.
 
 ---
 
@@ -33,7 +50,7 @@ things that show up in real interviews and are usually missing:
 | Database  | PostgreSQL, SQLite for local and tests    | Same schema both ways                              |
 | Frontend  | React 18, TypeScript (strict), Vite       | No framework beyond React needed for two screens   |
 | Charts    | Hand-rolled SVG                           | One line series does not need a charting library   |
-| Tests     | pytest, Vitest, Testing Library           | 109 tests, no network access                       |
+| Tests     | pytest, Vitest, Testing Library           | 127 tests, no network access                       |
 
 ## Quick start
 
@@ -64,11 +81,11 @@ Interactive API docs: http://localhost:8000/docs
 ## Tests
 
 ```bash
-cd backend  && python -m pytest -q      # 68 tests
-cd frontend && npm test                 # 41 tests
+cd backend  && python -m pytest -q      # 70 tests
+cd frontend && npm test                 # 57 tests
 ```
 
-The backend suite never touches the network — `probe` is stubbed and the
+The backend suite never touches the network â€” `probe` is stubbed and the
 database is in-memory SQLite with foreign keys switched on so cascades behave
 the same way they do in production. The frontend suite mocks `fetch` and asserts
 on real rendered output.
@@ -88,25 +105,25 @@ kind of thing that is easy to get wrong again:
 
 ```
 pulse/
-├── backend/
-│   ├── app/
-│   │   ├── main.py        app factory, CORS, lifespan
-│   │   ├── config.py      env-driven settings
-│   │   ├── models.py      User, Monitor, Check
-│   │   ├── db.py          engine, session, SQLite pragmas
-│   │   ├── security.py    PBKDF2 hashing, JWT issue/verify
-│   │   ├── deps.py        current-user dependency
-│   │   ├── probe.py       one HTTP request -> a Check
-│   │   ├── scheduler.py   the background loop
-│   │   ├── stats.py       uptime, percentiles, incidents
-│   │   └── routers/       auth, monitors
-│   └── tests/             68 tests
-├── frontend/
-│   └── src/
-│       ├── api.ts         typed client
-│       ├── format.ts      formatting, tested in isolation
-│       └── pages/         Login, Dashboard, MonitorDetail
-└── .github/workflows/     CI
+â”œâ”€â”€ backend/
+â”‚   â”œâ”€â”€ app/
+â”‚   â”‚   â”œâ”€â”€ main.py        app factory, CORS, lifespan
+â”‚   â”‚   â”œâ”€â”€ config.py      env-driven settings
+â”‚   â”‚   â”œâ”€â”€ models.py      User, Monitor, Check
+â”‚   â”‚   â”œâ”€â”€ db.py          engine, session, SQLite pragmas
+â”‚   â”‚   â”œâ”€â”€ security.py    PBKDF2 hashing, JWT issue/verify
+â”‚   â”‚   â”œâ”€â”€ deps.py        current-user dependency
+â”‚   â”‚   â”œâ”€â”€ probe.py       one HTTP request -> a Check
+â”‚   â”‚   â”œâ”€â”€ scheduler.py   the background loop
+â”‚   â”‚   â”œâ”€â”€ stats.py       uptime, percentiles, incidents
+â”‚   â”‚   â””â”€â”€ routers/       auth, monitors
+â”‚   â””â”€â”€ tests/             70 tests
+â”œâ”€â”€ frontend/
+â”‚   â””â”€â”€ src/
+â”‚       â”œâ”€â”€ api.ts         typed client
+â”‚       â”œâ”€â”€ format.ts      formatting, tested in isolation
+â”‚       â””â”€â”€ pages/         Login, Dashboard, MonitorDetail
+â””â”€â”€ .github/workflows/     CI
 ```
 
 ### API
