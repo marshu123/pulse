@@ -22,8 +22,8 @@ Create an account, add any public URL, and it is probed immediately. Nothing to
 install.
 
 > The API runs on Render's free tier, which sleeps after 15 minutes idle. The
-> first request after a quiet period takes about 30 seconds while it wakes up â€”
-> everything works, it is just slow the once. A paid instance removes the delay.
+> first request after a quiet period takes about 30 seconds while it wakes up.
+> Everything works, it is just slow that once. A paid instance removes the delay.
 
 ---
 
